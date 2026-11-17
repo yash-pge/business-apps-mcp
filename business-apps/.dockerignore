@@ -1,0 +1,20 @@
+.env
+*.env
+!.env.example
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+tests/
+docs/
+.git/
+.gitignore
+*.md
+# Needed by the package build (pyproject.toml declares it as the readme).
+!README.md

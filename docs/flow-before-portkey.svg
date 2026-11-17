@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+    <style>
+      .title { font-size: 26px; font-weight: 700; fill: #1b2a4a; }
+      .subtitle { font-size: 15px; fill: #5b6b86; }
+      .box-label { font-size: 15px; font-weight: 600; }
+      .box-sub { font-size: 12px; }
+      .edge { font-size: 12px; fill: #444; }
+      .note { font-size: 12.5px; fill: #7a4f00; }
+      .phase { font-size: 13px; font-weight: 700; fill: #2e7d32; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1100" height="620" fill="#f7f9fc"/>
+  <text x="40" y="48" class="title">Flow — BEFORE Portkey Access (Phase 2 v1)</text>
+  <text x="40" y="74" class="subtitle">Direct connection. Developer tools talk straight to your internal MCP server over Streamable HTTP. Retrieve-only.</text>
+
+  <!-- Client box -->
+  <rect x="40" y="150" width="210" height="150" rx="12" fill="#ede7f6" stroke="#7e57c2" stroke-width="2"/>
+  <text x="145" y="180" text-anchor="middle" class="box-label" fill="#4527a0">AI Applications</text>
+  <text x="145" y="208" text-anchor="middle" class="box-sub" fill="#5e35b1">KIRO</text>
+  <text x="145" y="230" text-anchor="middle" class="box-sub" fill="#5e35b1">GitHub Copilot</text>
+  <text x="145" y="266" text-anchor="middle" class="box-sub" fill="#6a4fb0">(desktop clients)</text>
+
+  <!-- MCP Server box -->
+  <rect x="360" y="130" width="250" height="190" rx="12" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+  <text x="485" y="160" text-anchor="middle" class="box-label" fill="#0d47a1">Internal MCP Server</text>
+  <text x="485" y="182" text-anchor="middle" class="box-sub" fill="#1565c0">Streamable HTTP</text>
+  <text x="485" y="210" text-anchor="middle" class="box-sub" fill="#1565c0">tool: search_business_apps</text>
+  <text x="485" y="236" text-anchor="middle" class="box-sub" fill="#1565c0">API key auth</text>
+  <text x="485" y="262" text-anchor="middle" class="box-sub" fill="#1565c0">retriever.py</text>
+  <text x="485" y="294" text-anchor="middle" class="box-sub" fill="#607d8b">(runs locally / self-hosted)</text>
+
+  <!-- Bedrock KB box -->
+  <rect x="720" y="130" width="250" height="140" rx="12" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+  <text x="845" y="162" text-anchor="middle" class="box-label" fill="#1b5e20">Bedrock Knowledge Base</text>
+  <text x="845" y="188" text-anchor="middle" class="box-sub" fill="#2e7d32">ID: QKQDEAJBG9</text>
+  <text x="845" y="212" text-anchor="middle" class="box-sub" fill="#2e7d32">retrieve API</text>
+  <text x="845" y="236" text-anchor="middle" class="box-sub" fill="#2e7d32">Titan v2 embeddings</text>
+
+  <!-- OpenSearch box -->
+  <rect x="720" y="330" width="250" height="120" rx="12" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="845" y="362" text-anchor="middle" class="box-label" fill="#e65100">OpenSearch Serverless</text>
+  <text x="845" y="388" text-anchor="middle" class="box-sub" fill="#ef6c00">amplify-rag-business-apps</text>
+  <text x="845" y="412" text-anchor="middle" class="box-sub" fill="#ef6c00">index (~29.7k vectors)</text>
+
+  <!-- Arrows -->
+  <line x1="250" y1="225" x2="356" y2="225" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="303" y="214" text-anchor="middle" class="edge">query</text>
+  <text x="303" y="246" text-anchor="middle" class="edge">(MCP / HTTP)</text>
+
+  <line x1="610" y1="200" x2="716" y2="200" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="663" y="190" text-anchor="middle" class="edge">retrieve()</text>
+
+  <line x1="845" y1="270" x2="845" y2="326" stroke="#444" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="900" y="302" text-anchor="middle" class="edge">vector search</text>
+
+  <!-- return arrow -->
+  <path d="M716,245 C650,290 560,300 485,322" fill="none" stroke="#2e7d32" stroke-width="2" stroke-dasharray="6,5" marker-end="url(#arrow)"/>
+  <text x="600" y="330" text-anchor="middle" class="edge" fill="#2e7d32">chunks: text + score + source</text>
+
+  <path d="M360,300 C300,330 230,320 160,306" fill="none" stroke="#2e7d32" stroke-width="2" stroke-dasharray="6,5" marker-end="url(#arrow)"/>
+  <text x="258" y="340" text-anchor="middle" class="edge" fill="#2e7d32">results back to client</text>
+
+  <!-- note -->
+  <rect x="40" y="420" width="640" height="150" rx="10" fill="#fffde7" stroke="#fbc02d" stroke-width="1.5"/>
+  <text x="60" y="450" class="phase">What happens here</text>
+  <text x="60" y="478" class="note">1. Developer asks a question in KIRO / Copilot.</text>
+  <text x="60" y="500" class="note">2. The tool call goes directly to your MCP server (API key checked).</text>
+  <text x="60" y="522" class="note">3. Server calls Bedrock KB retrieve -> KB embeds query + searches OpenSearch.</text>
+  <text x="60" y="544" class="note">4. Matching chunks return to the client; the client's AI writes the answer.</text>
+  <text x="60" y="566" class="note">No Portkey in the path. No answer-generation inside the server.</text>
+</svg>

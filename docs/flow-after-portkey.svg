@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow2" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#444"/>
+    </marker>
+    <style>
+      .title { font-size: 26px; font-weight: 700; fill: #1b2a4a; }
+      .subtitle { font-size: 15px; fill: #5b6b86; }
+      .box-label { font-size: 15px; font-weight: 600; }
+      .box-sub { font-size: 12px; }
+      .edge { font-size: 12px; fill: #444; }
+      .note { font-size: 12.5px; fill: #7a4f00; }
+      .phase { font-size: 13px; font-weight: 700; fill: #2e7d32; }
+      .gw { font-size: 12px; fill: #6a1b9a; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="700" fill="#f7f9fc"/>
+  <text x="40" y="48" class="title">Flow — AFTER Portkey Access (Phase 2 target)</text>
+  <text x="40" y="74" class="subtitle">All traffic routes through the Portkey MCP Gateway. The same server is registered behind it. Nothing in retriever.py changes.</text>
+
+  <!-- Client box -->
+  <rect x="40" y="200" width="200" height="160" rx="12" fill="#ede7f6" stroke="#7e57c2" stroke-width="2"/>
+  <text x="140" y="232" text-anchor="middle" class="box-label" fill="#4527a0">AI Applications</text>
+  <text x="140" y="260" text-anchor="middle" class="box-sub" fill="#5e35b1">KIRO</text>
+  <text x="140" y="282" text-anchor="middle" class="box-sub" fill="#5e35b1">GitHub Copilot</text>
+  <text x="140" y="304" text-anchor="middle" class="box-sub" fill="#5e35b1">Custom Agents</text>
+  <text x="140" y="334" text-anchor="middle" class="box-sub" fill="#6a4fb0">(connect to Gateway)</text>
+
+  <!-- Gateway box -->
+  <rect x="330" y="150" width="270" height="270" rx="12" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2.5"/>
+  <text x="465" y="180" text-anchor="middle" class="box-label" fill="#6a1b9a">Portkey MCP Gateway</text>
+  <text x="465" y="200" text-anchor="middle" class="box-sub" fill="#7b1fa2">(CCOE managed)</text>
+  <text x="350" y="230" class="gw">Authentication (API key / OAuth)</text>
+  <text x="350" y="254" class="gw">Access control (teams / users)</text>
+  <text x="350" y="278" class="gw">Tool provisioning (on/off per user)</text>
+  <text x="350" y="302" class="gw">Observability (metrics, audit logs)</text>
+  <text x="350" y="326" class="gw">Guardrails (rate limits, filters)</text>
+  <text x="350" y="356" class="gw" font-weight="700">+ Identity Forwarding</text>
+  <text x="350" y="378" class="gw">(passes real user to the server)</text>
+
+  <!-- MCP Server box -->
+  <rect x="690" y="150" width="240" height="200" rx="12" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+  <text x="810" y="180" text-anchor="middle" class="box-label" fill="#0d47a1">Internal MCP Server</text>
+  <text x="810" y="202" text-anchor="middle" class="box-sub" fill="#1565c0">Streamable HTTP</text>
+  <text x="810" y="226" text-anchor="middle" class="box-sub" fill="#1565c0">registered with Gateway</text>
+  <text x="810" y="250" text-anchor="middle" class="box-sub" fill="#1565c0">search_business_apps</text>
+  <text x="810" y="276" text-anchor="middle" class="box-sub" fill="#1565c0">reads forwarded identity</text>
+  <text x="810" y="302" text-anchor="middle" class="box-sub" fill="#90a4ae">generation/ (future, via Portkey)</text>
+  <text x="810" y="326" text-anchor="middle" class="box-sub" fill="#607d8b">retriever.py (unchanged)</text>
+
+  <!-- Bedrock KB box -->
+  <rect x="690" y="430" width="240" height="120" rx="12" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+  <text x="810" y="462" text-anchor="middle" class="box-label" fill="#1b5e20">Bedrock Knowledge Base</text>
+  <text x="810" y="488" text-anchor="middle" class="box-sub" fill="#2e7d32">ID: QKQDEAJBG9</text>
+  <text x="810" y="512" text-anchor="middle" class="box-sub" fill="#2e7d32">retrieve API</text>
+
+  <!-- OpenSearch box -->
+  <rect x="990" y="430" width="180" height="120" rx="12" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="1080" y="468" text-anchor="middle" class="box-label" fill="#e65100">OpenSearch</text>
+  <text x="1080" y="492" text-anchor="middle" class="box-sub" fill="#ef6c00">business-apps</text>
+  <text x="1080" y="514" text-anchor="middle" class="box-sub" fill="#ef6c00">index (~29.7k)</text>
+
+  <!-- Arrows -->
+  <line x1="240" y1="280" x2="326" y2="280" stroke="#444" stroke-width="2" marker-end="url(#arrow2)"/>
+  <text x="283" y="270" text-anchor="middle" class="edge">MCP / HTTP</text>
+
+  <line x1="600" y1="250" x2="686" y2="250" stroke="#444" stroke-width="2" marker-end="url(#arrow2)"/>
+  <text x="643" y="240" text-anchor="middle" class="edge">forward</text>
+  <text x="643" y="296" text-anchor="middle" class="edge">+ identity</text>
+
+  <line x1="810" y1="350" x2="810" y2="426" stroke="#444" stroke-width="2" marker-end="url(#arrow2)"/>
+  <text x="867" y="392" text-anchor="middle" class="edge">retrieve()</text>
+
+  <line x1="930" y1="490" x2="986" y2="490" stroke="#444" stroke-width="2" marker-end="url(#arrow2)"/>
+  <text x="958" y="480" text-anchor="middle" class="edge">search</text>
+
+  <!-- return path -->
+  <path d="M686,320 C640,360 560,370 468,392" fill="none" stroke="#2e7d32" stroke-width="2" stroke-dasharray="6,5" marker-end="url(#arrow2)"/>
+  <text x="590" y="400" text-anchor="middle" class="edge" fill="#2e7d32">chunks back</text>
+  <path d="M330,360 C290,390 230,390 150,372" fill="none" stroke="#2e7d32" stroke-width="2" stroke-dasharray="6,5" marker-end="url(#arrow2)"/>
+  <text x="250" y="405" text-anchor="middle" class="edge" fill="#2e7d32">results to client</text>
+
+  <!-- note -->
+  <rect x="40" y="470" width="610" height="190" rx="10" fill="#fffde7" stroke="#fbc02d" stroke-width="1.5"/>
+  <text x="60" y="500" class="phase">What changes vs. before</text>
+  <text x="60" y="528" class="note">1. Clients connect to the Portkey Gateway, not directly to your server.</text>
+  <text x="60" y="550" class="note">2. Gateway does auth, access control, guardrails, logging in one place.</text>
+  <text x="60" y="572" class="note">3. Gateway forwards the request + real user identity to your server.</text>
+  <text x="60" y="594" class="note">4. Server still calls Bedrock KB retrieve -> OpenSearch (same as before).</text>
+  <text x="60" y="616" class="note">5. Optional future: an answer-generation tool whose LLM call goes via Portkey.</text>
+  <text x="60" y="644" class="note" font-weight="700">retriever.py and the search tool are IDENTICAL to the "before" version.</text>
+</svg>

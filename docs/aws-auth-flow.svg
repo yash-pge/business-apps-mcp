@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="880" viewBox="0 0 1320 880" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="gray" markerWidth="14" markerHeight="14" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#37474f"/>
+    </marker>
+    <marker id="purple" markerWidth="14" markerHeight="14" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8e24aa"/>
+    </marker>
+    <marker id="green" markerWidth="14" markerHeight="14" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2e7d32"/>
+    </marker>
+    <style>
+      .title { font-size: 32px; font-weight: 700; fill: #15233f; }
+      .subtitle { font-size: 16px; fill: #56637a; }
+      .lbl { font-size: 20px; font-weight: 700; }
+      .code { font-size: 15px; font-weight: 700; }
+      .s { font-size: 14.5px; }
+      .path { font-size: 16px; font-weight: 700; }
+      .tag { font-size: 13px; font-style: italic; }
+      .note { font-size: 14.5px; fill: #5b6b86; }
+      .noteb { font-size: 15px; font-weight: 700; fill: #2e7d32; }
+      .mid { font-size: 13px; fill: #37474f; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1320" height="880" fill="#f6f8fb"/>
+  <text x="660" y="52" text-anchor="middle" class="title">How our server logs in to AWS</text>
+  <text x="660" y="86" text-anchor="middle" class="subtitle">No passwords in the code. AWS gives temporary credentials automatically.</text>
+
+  <!-- our code box -->
+  <rect x="470" y="130" width="380" height="120" rx="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="3"/>
+  <text x="660" y="168" text-anchor="middle" class="lbl" fill="#0d47a1">Our MCP Server (retriever.py)</text>
+  <text x="660" y="198" text-anchor="middle" class="code" fill="#1565c0">boto3.client("bedrock-agent-runtime")</text>
+  <text x="660" y="224" text-anchor="middle" class="s" fill="#607d8b">No keys. No secrets. It just asks AWS.</text>
+
+  <!-- path headers -->
+  <text x="310" y="320" text-anchor="middle" class="path" fill="#8e24aa">PATH A — On your laptop (now)</text>
+  <text x="1010" y="320" text-anchor="middle" class="path" fill="#1b5e20">PATH B — In production (deployed)</text>
+
+  <!-- Path A box -->
+  <rect x="60" y="350" width="500" height="250" rx="14" fill="#f3e5f5" stroke="#8e24aa" stroke-width="3"/>
+  <text x="310" y="386" text-anchor="middle" class="lbl" fill="#6a1b9a">AWS SSO Login</text>
+  <text x="86" y="424" class="s" fill="#4a148c">1.  You run:  aws sso login --profile amplify-dev</text>
+  <text x="86" y="454" class="s" fill="#4a148c">2.  You sign in with your PG&amp;E identity (browser).</text>
+  <text x="86" y="484" class="s" fill="#4a148c">3.  AWS hands your machine TEMPORARY keys</text>
+  <text x="104" y="508" class="s" fill="#4a148c">that expire automatically.</text>
+  <text x="86" y="538" class="s" fill="#4a148c">4.  boto3 finds them and uses them.</text>
+  <text x="310" y="578" text-anchor="middle" class="tag" fill="#8e24aa">Good for: local development &amp; testing</text>
+
+  <!-- Path B box -->
+  <rect x="760" y="350" width="500" height="250" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3"/>
+  <text x="1010" y="386" text-anchor="middle" class="lbl" fill="#1b5e20">IAM Task Role</text>
+  <text x="786" y="424" class="s" fill="#1b5e20">1.  The container runs on AWS (ECS Fargate).</text>
+  <text x="786" y="454" class="s" fill="#1b5e20">2.  An IAM Role is attached to it.</text>
+  <text x="786" y="484" class="s" fill="#1b5e20">3.  AWS injects TEMPORARY keys into the</text>
+  <text x="804" y="508" class="s" fill="#1b5e20">container automatically — and rotates them.</text>
+  <text x="786" y="538" class="s" fill="#1b5e20">4.  boto3 finds them and uses them.</text>
+  <text x="1010" y="578" text-anchor="middle" class="tag" fill="#2e7d32">Best practice for: production (no human login)</text>
+
+  <!-- arrows from paths to code box -->
+  <line x1="310" y1="348" x2="500" y2="252" stroke="#8e24aa" stroke-width="3.5" marker-end="url(#purple)"/>
+  <line x1="1010" y1="348" x2="820" y2="252" stroke="#2e7d32" stroke-width="3.5" marker-end="url(#green)"/>
+
+  <!-- arrow from code box down to KB. Label sits in the clear gap between the two
+       path boxes (x 560-760), so it never overlaps the IAM / SSO boxes. -->
+  <line x1="660" y1="250" x2="660" y2="648" stroke="#37474f" stroke-width="3.5" marker-end="url(#gray)"/>
+  <text x="660" y="288" text-anchor="middle" class="mid">uses the temporary</text>
+  <text x="660" y="628" text-anchor="middle" class="mid">credentials to call AWS</text>
+
+  <!-- KB box -->
+  <rect x="440" y="650" width="440" height="110" rx="14" fill="#fff3e0" stroke="#f57c00" stroke-width="3"/>
+  <text x="660" y="688" text-anchor="middle" class="lbl" fill="#e65100">AWS Bedrock Knowledge Base</text>
+  <text x="660" y="718" text-anchor="middle" class="s" fill="#ef6c00">QKQDEAJBG9  ·  allowed action:  bedrock:Retrieve</text>
+  <text x="660" y="740" text-anchor="middle" class="tag" fill="#ef6c00">search only — cannot change or delete anything</text>
+
+  <!-- key message -->
+  <rect x="60" y="788" width="1200" height="74" rx="12" fill="#fffde7" stroke="#fbc02d" stroke-width="1.5"/>
+  <text x="84" y="816" class="noteb">Key point for your manager:</text>
+  <text x="84" y="842" class="note">Same code, both places. Credentials are never stored — AWS provides short-lived ones. Permission is the minimum: search one knowledge base only.</text>
+</svg>

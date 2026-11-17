@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="860" viewBox="0 0 1360 860" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ar" markerWidth="13" markerHeight="13" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#37474f"/>
+    </marker>
+    <marker id="arg" markerWidth="13" markerHeight="13" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2e7d32"/>
+    </marker>
+    <style>
+      .title { font-size: 28px; font-weight: 700; fill: #15233f; }
+      .subtitle { font-size: 15px; fill: #56637a; }
+      .lbl { font-size: 15.5px; font-weight: 700; }
+      .sub { font-size: 12.5px; }
+      .edge { font-size: 12.5px; fill: #37474f; font-weight:600; }
+      .edgeg { font-size: 12.5px; fill: #2e7d32; font-weight:600; }
+      .sec { font-size: 13px; font-weight:700; fill:#6a1b9a; }
+      .note { font-size: 13px; fill:#5b6b86; }
+      .tag { font-size: 11.5px; fill:#78909c; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1360" height="860" fill="#f6f8fb"/>
+  <text x="40" y="50" class="title">Business Apps MCP Server — Architecture</text>
+  <text x="40" y="78" class="subtitle" fill="#56637a">How AI tools securely search the Business Apps knowledge base in AWS. Retrieve-only. No secrets in code.</text>
+
+  <!-- ============ LANE LABELS ============ -->
+  <text x="150" y="120" class="tag" text-anchor="middle">DEVELOPER TOOLS</text>
+  <text x="470" y="120" class="tag" text-anchor="middle">OUR MCP SERVER (ECS Fargate)</text>
+  <text x="1050" y="120" class="tag" text-anchor="middle">AWS (managed services)</text>
+
+  <!-- ============ CLIENTS ============ -->
+  <rect x="40" y="150" width="220" height="200" rx="14" fill="#ede7f6" stroke="#7e57c2" stroke-width="2"/>
+  <text x="150" y="180" text-anchor="middle" class="lbl" fill="#4527a0">AI Applications</text>
+  <text x="150" y="212" text-anchor="middle" class="sub" fill="#5e35b1">KIRO</text>
+  <text x="150" y="236" text-anchor="middle" class="sub" fill="#5e35b1">GitHub Copilot</text>
+  <text x="150" y="260" text-anchor="middle" class="sub" fill="#5e35b1">Custom Agents</text>
+  <text x="150" y="296" text-anchor="middle" class="sub" fill="#6a4fb0">Ask a question;</text>
+  <text x="150" y="316" text-anchor="middle" class="sub" fill="#6a4fb0">model calls the tool</text>
+
+  <!-- ============ MCP SERVER (big box) ============ -->
+  <rect x="320" y="150" width="340" height="470" rx="16" fill="#e3f2fd" stroke="#1976d2" stroke-width="2.5"/>
+  <text x="490" y="180" text-anchor="middle" class="lbl" fill="#0d47a1">business-apps MCP server</text>
+  <text x="490" y="200" text-anchor="middle" class="tag" fill="#1565c0">Python · fastmcp · Streamable HTTP :8080</text>
+
+  <!-- middleware -->
+  <rect x="345" y="220" width="290" height="70" rx="10" fill="#f3e5f5" stroke="#8e24aa" stroke-width="2"/>
+  <text x="490" y="246" text-anchor="middle" class="sec">1. Auth middleware</text>
+  <text x="490" y="268" text-anchor="middle" class="sub" fill="#6a1b9a">checks API key + records user identity</text>
+
+  <!-- tool -->
+  <rect x="345" y="306" width="290" height="78" rx="10" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+  <text x="490" y="332" text-anchor="middle" class="lbl" fill="#1b5e20">2. Tool: search_business_apps</text>
+  <text x="490" y="354" text-anchor="middle" class="sub" fill="#2e7d32">query, max_results, optional filter</text>
+  <text x="490" y="373" text-anchor="middle" class="sub" fill="#2e7d32">returns text + score + source</text>
+
+  <!-- retriever -->
+  <rect x="345" y="400" width="290" height="88" rx="10" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="490" y="426" text-anchor="middle" class="lbl" fill="#e65100">3. Retriever (retriever.py)</text>
+  <text x="490" y="448" text-anchor="middle" class="sub" fill="#ef6c00">boto3 client — only AWS caller</text>
+  <text x="490" y="468" text-anchor="middle" class="sub" fill="#ef6c00">timeouts + retries, no credentials in code</text>
+
+  <!-- config -->
+  <rect x="345" y="504" width="140" height="92" rx="10" fill="#eceff1" stroke="#607d8b" stroke-width="1.8"/>
+  <text x="415" y="528" text-anchor="middle" class="sub" fill="#455a64" font-weight="700">config</text>
+  <text x="415" y="550" text-anchor="middle" class="tag">region, KB id,</text>
+  <text x="415" y="568" text-anchor="middle" class="tag">keys — all via</text>
+  <text x="415" y="586" text-anchor="middle" class="tag">env vars</text>
+
+  <!-- generation future -->
+  <rect x="495" y="504" width="140" height="92" rx="10" fill="#fafafa" stroke="#bdbdbd" stroke-width="1.8" stroke-dasharray="5,4"/>
+  <text x="565" y="528" text-anchor="middle" class="sub" fill="#9e9e9e" font-weight="700">generation</text>
+  <text x="565" y="550" text-anchor="middle" class="tag">FUTURE: answer</text>
+  <text x="565" y="568" text-anchor="middle" class="tag">writing via</text>
+  <text x="565" y="586" text-anchor="middle" class="tag">Portkey</text>
+
+  <!-- ============ AWS ============ -->
+  <rect x="900" y="200" width="300" height="150" rx="14" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2"/>
+  <text x="1050" y="232" text-anchor="middle" class="lbl" fill="#1b5e20">Bedrock Knowledge Base</text>
+  <text x="1050" y="258" text-anchor="middle" class="sub" fill="#2e7d32">ID: QKQDEAJBG9</text>
+  <text x="1050" y="282" text-anchor="middle" class="sub" fill="#2e7d32">retrieve API</text>
+  <text x="1050" y="306" text-anchor="middle" class="sub" fill="#2e7d32">embeds query (Titan v2)</text>
+  <text x="1050" y="330" text-anchor="middle" class="sub" fill="#2e7d32">+ runs vector search</text>
+
+  <rect x="900" y="400" width="300" height="120" rx="14" fill="#fff3e0" stroke="#ef6c00" stroke-width="2"/>
+  <text x="1050" y="432" text-anchor="middle" class="lbl" fill="#e65100">OpenSearch Serverless</text>
+  <text x="1050" y="458" text-anchor="middle" class="sub" fill="#ef6c00">amplify-rag-business-apps</text>
+  <text x="1050" y="482" text-anchor="middle" class="sub" fill="#ef6c00">index · ~29,700 vectors</text>
+  <text x="1050" y="504" text-anchor="middle" class="tag">(data loaded in Phase 1)</text>
+
+  <!-- ============ FLOW ARROWS ============ -->
+  <line x1="260" y1="250" x2="341" y2="250" stroke="#37474f" stroke-width="2.4" marker-end="url(#ar)"/>
+  <text x="300" y="238" text-anchor="middle" class="edge">① ask</text>
+
+  <line x1="490" y1="290" x2="490" y2="304" stroke="#37474f" stroke-width="2.4" marker-end="url(#ar)"/>
+  <line x1="490" y1="384" x2="490" y2="398" stroke="#37474f" stroke-width="2.4" marker-end="url(#ar)"/>
+
+  <line x1="635" y1="440" x2="896" y2="270" stroke="#37474f" stroke-width="2.4" marker-end="url(#ar)"/>
+  <text x="770" y="350" text-anchor="middle" class="edge">② retrieve(query)</text>
+
+  <line x1="1050" y1="350" x2="1050" y2="398" stroke="#37474f" stroke-width="2.4" marker-end="url(#ar)"/>
+  <text x="1120" y="378" text-anchor="middle" class="edge">③ search</text>
+
+  <!-- return -->
+  <line x1="896" y1="300" x2="637" y2="455" stroke="#2e7d32" stroke-width="2.2" stroke-dasharray="7,5" marker-end="url(#arg)"/>
+  <text x="790" y="430" text-anchor="middle" class="edgeg">④ matching chunks</text>
+
+  <line x1="341" y1="330" x2="262" y2="300" stroke="#2e7d32" stroke-width="2.2" stroke-dasharray="7,5" marker-end="url(#arg)"/>
+  <text x="300" y="360" text-anchor="middle" class="edgeg">⑤ results → AI answers</text>
+
+  <!-- ============ AUTH / SECURITY PANEL ============ -->
+  <rect x="40" y="400" width="250" height="220" rx="12" fill="#ffffff" stroke="#8e24aa" stroke-width="2"/>
+  <text x="60" y="430" class="sec">How we authenticate to AWS</text>
+  <text x="60" y="458" class="note" font-weight="700" fill="#2e7d32">No keys or passwords in code.</text>
+  <text x="60" y="482" class="note">boto3 auto-finds credentials:</text>
+  <text x="70" y="506" class="note">• Local: AWS SSO login</text>
+  <text x="70" y="528" class="note">  (temporary, expires)</text>
+  <text x="70" y="552" class="note" font-weight="700" fill="#1b5e20">• Prod: IAM Task Role</text>
+  <text x="70" y="574" class="note">  (auto, rotating, no secret)</text>
+  <text x="60" y="600" class="note" fill="#c62828">Least privilege: bedrock:Retrieve only</text>
+
+  <!-- ============ BOTTOM NOTES ============ -->
+  <rect x="320" y="650" width="880" height="170" rx="12" fill="#fffde7" stroke="#fbc02d" stroke-width="1.5"/>
+  <text x="340" y="680" class="sec" fill="#2e7d32">Why this is solid (best practice)</text>
+  <text x="340" y="708" class="note">• Retrieve-only: the server just searches; the AI writes the answer. Small, safe scope.</text>
+  <text x="340" y="730" class="note">• Streamable HTTP: meets org MCP standard; ready to register behind the Portkey Gateway with no code change.</text>
+  <text x="340" y="752" class="note">• Layered design: separate files for config, auth, retrieval — easy to test, review, and maintain.</text>
+  <text x="340" y="774" class="note">• Runs on ECS Fargate (matches other Amplify services) with an IAM role — AWS gold standard, no stored secrets.</text>
+  <text x="340" y="796" class="note">• Minimal blast radius: can only read/search one knowledge base — never modify or delete anything.</text>
+</svg>
