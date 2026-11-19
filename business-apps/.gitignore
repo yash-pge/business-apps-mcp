@@ -1,29 +1,28 @@
-# Environment / secrets
-.env
-*.env
-!.env.example
-
 # Python
 __pycache__/
-*.py[cod]
+*.pyc
+*.pyo
 *.egg-info/
-.eggs/
-build/
-dist/
-.venv/
-venv/
-env/
-
-# Test / coverage
 .pytest_cache/
 .coverage
 coverage.xml
 htmlcov/
-.mypy_cache/
-.ruff_cache/
+.benchmarks/
+webapp/
+.scannerwork
 
-# IDE / OS
-.vscode/
-.idea/
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
 .DS_Store
 Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+.kiro/
+.venv/
+build/

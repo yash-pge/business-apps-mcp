@@ -1,36 +1,28 @@
-# Connecting KIRO and VS Code Copilot to the Business Apps MCP server
+# Connecting Kiro and VS Code Copilot to the Business Apps MCP server
 
-The server speaks **Streamable HTTP**, so both clients use the same URL
-(`http://localhost:8080/mcp`) and the same API key header.
+The server speaks **Streamable HTTP** at `http://localhost:5000/mcp`. Like
+`ecm-mcp-server`, it does not check caller credentials itself (the Portkey
+gateway does that in deployed environments), so local clients need no headers.
 
-## 0. Start the server (every session)
+## 0. Start the server
 
 ```powershell
-aws sso login --profile amplify-dev
-$env:AWS_PROFILE = "amplify-dev"
-
-cd c:\Users\YXVF\repos\final\test\Amplify-MCP-Server\business-apps
-$env:BAMCP_API_KEYS = "<your-api-key>"
-python -m business_apps_mcp.server
+cd business-apps
+python server.py
 ```
 
-Leave this terminal running. Verify: open `http://localhost:8080/health` → `{"status":"ok",...}`.
+Settings come from `business-apps/.env` (see `.env.example`). Verify:
+`http://localhost:5000/health` returns `{"status":"ok",...}`.
 
----
+## 1. Kiro
 
-## 1. KIRO
-
-KIRO reads `.kiro/settings/mcp.json` (workspace) or `~/.kiro/settings/mcp.json` (user).
-Create/merge this into **one** of them:
+Add to `.kiro/settings/mcp.json` (workspace) or `~/.kiro/settings/mcp.json` (user):
 
 ```json
 {
   "mcpServers": {
     "business-apps": {
-      "url": "http://localhost:8080/mcp",
-      "headers": {
-        "x-api-key": "<your-api-key>"
-      },
+      "url": "http://localhost:5000/mcp",
       "disabled": false,
       "autoApprove": ["search_business_apps"]
     }
@@ -38,47 +30,22 @@ Create/merge this into **one** of them:
 }
 ```
 
-Then: open the **MCP Servers** view in the Kiro feature panel and confirm
-`business-apps` shows connected (or run the "reconnect" action). Ask Kiro
-something like *"search business apps for how to request VDI access"* and it
-will call the `search_business_apps` tool.
+## 2. VS Code Copilot
 
----
-
-## 2. VS Code GitHub Copilot
-
-VS Code reads `.vscode/mcp.json` (workspace-level) — already created in this repo:
+`.vscode/mcp.json`:
 
 ```json
 {
   "servers": {
     "business-apps": {
       "type": "http",
-      "url": "http://localhost:8080/mcp",
-      "headers": { "x-api-key": "<your-api-key>" }
+      "url": "http://localhost:5000/mcp"
     }
   }
 }
 ```
 
-Then in VS Code:
-
-1. Open the Copilot **Chat** view and switch to **Agent** mode.
-2. Click the **tools** icon — you should see `business-apps / search_business_apps`.
-   - If not, run the command palette → **MCP: List Servers** → Start `business-apps`.
-3. Ask: *"Use business-apps to find how to request access to a business app."*
-
-> Requires a recent VS Code with MCP support (1.102+). If `.vscode/mcp.json`
-> isn't picked up, run **MCP: Add Server → HTTP** and paste the URL + header.
-
----
-
 ## Notes
 
-- Both clients point at the **same running server** — start it once, use it from
-  either tool.
-- The `x-api-key` value must match one of the keys in `BAMCP_API_KEYS`. For local
-  testing we use a key of your choosing. For anything shared, use a real secret and
-  (eventually) the Portkey Gateway.
-- If a client can't connect: check the server terminal is still running and that
-  `/health` responds.
+- Start the server once and use it from either client.
+- If a client can't connect, check the server terminal and `/health`.

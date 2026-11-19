@@ -1,62 +1,43 @@
-[project]
-name = "business-apps-mcp-server"
-version = "0.1.0"
-description = "Production-grade MCP server exposing semantic retrieval over the Amplify Business Apps Bedrock Knowledge Base."
-readme = "README.md"
-requires-python = ">=3.11"
-license = { text = "Proprietary" }
-authors = [{ name = "Amplify Platform Team" }]
+[build-system]
+requires = ["setuptools>=68.0", "wheel>=0.46.2"]
+build-backend = "setuptools.build_meta"
 
-# Keep these limits identical to requirements.txt (which the Docker image
-# installs), so local/dev installs resolve to the same major versions as
-# production. fastmcp 2.14.7 is the version this code was verified against.
+[project]
+name = "business-apps-search"
+# Four-part release number, not an IP address. Keep in sync with setup.py.
+version = "1.0.0.0"  # NOSONAR - python:S1313 false positive (version, not an IP)
+description = "Performs search on the Business Apps knowledge base."
+requires-python = ">=3.11"
 dependencies = [
-    "fastmcp>=2.14.7,<3.0.0",
-    "boto3>=1.35.0,<2.0.0",
-    "botocore>=1.35.0,<2.0.0",
-    "pydantic>=2.7.0,<3.0.0",
-    "pydantic-settings>=2.3.0,<3.0.0",
-    "python-json-logger>=2.0.7,<3.0.0",
-    "starlette>=0.37.0,<1.0.0",
-    "uvicorn>=0.30.0,<1.0.0",
-    "python-jose[cryptography]>=3.3.0,<4.0.0",
-    "httpx>=0.27.0,<1.0.0",
+    # MCP server and protocol (FastMCP lives in mcp.server.fastmcp). Same pin as
+    # ecm-mcp-server: mcp 2.0 renamed FastMCP, so stay on 1.x until migrated.
+    "mcp[cli]>=1.23.0,<2.0.0",
+    # Environment variable loading.
+    "python-dotenv>=1.0.0",
+    # HTTP clients. requests calls the retrieve API; httpx ships with mcp.
+    "requests>=2.31.0",
+    "httpx>=0.27.0",
+    # Entra ID certificate credential.
+    "azure-identity>=1.26.0",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest>=8.0.0",
-    "pytest-asyncio>=0.23.0",
     "pytest-cov>=5.0.0",
-    "moto>=5.0.0",
-    "ruff>=0.5.0",
-    "mypy>=1.10.0",
 ]
 
-[project.scripts]
-business-apps-mcp = "business_apps_mcp.server:main"
+[tool.setuptools]
+# Flat layout: server.py is a top-level module and tools/ is the package.
+py-modules = ["server"]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/business_apps_mcp"]
-
-[tool.ruff]
-line-length = 100
-target-version = "py311"
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "N", "UP", "B", "W", "C4", "SIM"]
+[tool.setuptools.packages.find]
+include = ["tools*"]
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
-testpaths = ["tests"]
-addopts = "-ra -q --cov=business_apps_mcp --cov-report=term-missing"
+testpaths = ["test"]
 
-[tool.mypy]
-python_version = "3.11"
-warn_unused_ignores = true
-disallow_untyped_defs = true
-ignore_missing_imports = true
+[tool.coverage.run]
+source = ["."]
+relative_files = true
+omit = [".venv/*", "build/*", "test/*", "setup.py"]

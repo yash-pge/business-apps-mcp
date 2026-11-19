@@ -1,44 +1,82 @@
-# syntax=docker/dockerfile:1
+# Business Apps Search MCP Server Dockerfile (same structure as ecm-mcp-server)
+#
+# Transport:      Streamable HTTP on port 5000
+#   MCP endpoint: http://<host>:5000/mcp
+#   Health:       http://<host>:5000/health
+#
+#   docker build -t mcp-business-apps-search .
+#   docker run --rm -p 5000:5000 --env-file .env mcp-business-apps-search
+#   curl http://localhost:5000/health
+#
+# Difference from ecm: dependencies install from requirements.txt with pip
+# (there is no uv.lock yet). Switch to `uv sync --frozen` once a lock exists.
 
-# ---- base -----------------------------------------------------------------
-FROM python:3.11-slim AS base
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+ARG IMAGE_TYPE=mcp-business-apps-search
+ARG OWNER=pge
+ARG ENVIRONMENT=dev
+
+# =============================================================================
+# Stage 1: Builder — install Python dependencies into an isolated venv
+# =============================================================================
+FROM python:3.11-slim AS builder
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential libffi-dev libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+COPY requirements.txt ./
+RUN python -m venv /opt/venv && \
+    /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# =============================================================================
+# Stage 2: Runtime
+# =============================================================================
+FROM python:3.11-slim AS runtime
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/*
+
+ARG ENVIRONMENT
+ARG IMAGE_TYPE
+ARG OWNER
+
+LABEL Environment=${ENVIRONMENT}
+LABEL Image_Type=${IMAGE_TYPE}
+LABEL Owner=${OWNER}
+LABEL description="Performs search on the Business Apps knowledge base."
+LABEL version="1.0.0"
 
 WORKDIR /app
 
-# ---- dependencies (cached layer) -----------------------------------------
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN groupadd -r -g 1500 mcp && \
+    useradd  -r -u 1500 -g 1500 -s /bin/bash -d /app mcp && \
+    chown -R 1500:1500 /app
 
-# ---- application ----------------------------------------------------------
-# README.md is required by the build backend: pyproject.toml declares it as the
-# package readme, and the install fails without it (it is un-ignored in
-# .dockerignore for that reason).
-COPY README.md pyproject.toml ./
-COPY src ./src
-RUN pip install --no-cache-dir -e .
+COPY --from=builder --chown=1500:1500 /opt/venv /opt/venv
 
-# Run as non-root.
-RUN useradd --create-home --uid 10001 appuser
-USER appuser
+# Application code (server + tools).
+COPY --chown=1500:1500 server.py ./
+COPY --chown=1500:1500 tools ./tools
 
-# The container must listen on all interfaces (the app defaults to loopback), and
-# logs at INFO. LOG_LEVEL is the same variable name ecm-mcp-server uses.
-ENV BAMCP_HOST=0.0.0.0 \
-    BAMCP_PORT=8080 \
-    LOG_LEVEL=INFO
+RUN mkdir -p /app/tmp && chown 1500:1500 /app/tmp
 
-EXPOSE 8080
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    TMPDIR=/app/tmp \
+    MCP_PORT=5000 \
+    MCP_HOST=0.0.0.0 \
+    LOG_LEVEL=INFO \
+    FASTMCP_TRANSPORT_SECURITY__ENABLE_DNS_REBINDING_PROTECTION=false
+USER 1500
 
-# Container healthcheck hits the unauthenticated /health route.
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/health').status==200 else 1)" || exit 1
+EXPOSE 5000
 
-# Start through the app's own entry point (like ecm-mcp-server's `python3 server.py`).
-# It binds BAMCP_HOST:BAMCP_PORT, logs the endpoint, health URL and tools at
-# startup, and runs uvicorn with its access log off (the app writes its own
-# one-line-per-request JSON entry with the trace id and duration).
-CMD ["python", "-m", "business_apps_mcp.server"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD wget -qO- http://localhost:5000/health >/dev/null 2>&1 || exit 1
+
+CMD ["python3", "server.py"]
